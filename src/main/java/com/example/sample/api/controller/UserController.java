@@ -3,7 +3,7 @@ package com.example.sample.api.controller;
 
 import com.example.sample.api.form.UserForm;
 import com.example.sample.api.response.ApiResponse;
-import com.example.sample.api.response.FailureResponse;
+import com.example.sample.api.response.ErrorResponse;
 import com.example.sample.api.response.PageResponse;
 import com.example.sample.config.Translator;
 import com.example.sample.dto.UserDTO;
@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.sample.util.ApiConst.API_VERSION_1;
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -36,7 +38,7 @@ public class UserController {
     private final PasswordEncoder encoder;
     private final UserService userService;
 
-    @GetMapping
+    @GetMapping(headers = API_VERSION_1)
     public ApiResponse getUserList(
             @RequestParam(name = "search", defaultValue = "") Optional<String> _search,
             @RequestParam(name = "pageNo", defaultValue = "1") Optional<Integer> _pageNo,
@@ -55,7 +57,7 @@ public class UserController {
         return new ApiResponse(HttpStatus.OK.value(), "users", view);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", headers = API_VERSION_1)
     public ApiResponse getUser(@PathVariable("id") @Min(1) Integer _id) throws ResourceNotFoundException {
         log.info("Request api GET api/v1/users/{}", _id);
         AppUser user = userService.getById(_id);
@@ -63,7 +65,7 @@ public class UserController {
     }
 
     // @PreAuthorize("hasAnyAuthority('SYSTEM_ADMIN', 'ROLE_MANAGER')")
-    @PostMapping
+    @PostMapping(headers = API_VERSION_1)
     public ApiResponse createUser(@Valid @RequestBody UserForm form) {
         log.info("Request api POST api/v1/users");
 
@@ -79,11 +81,11 @@ public class UserController {
             return new ApiResponse(HttpStatus.CREATED.value(), Translator.toLocale("user-add-success"), user.getId());
         } catch (Exception e) {
             log.error("Can not create user");
-            return new FailureResponse(HttpStatus.NO_CONTENT.value(), Translator.toLocale("user-add-fail"));
+            return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), Translator.toLocale("user-add-fail"));
         }
     }
 
-    @PutMapping
+    @PutMapping(headers = API_VERSION_1)
     public ApiResponse updateUser(@Valid @RequestBody UserForm form) throws ResourceNotFoundException {
         log.info("Request api PUT api/v1/users/{}", form.getId());
 
@@ -94,7 +96,7 @@ public class UserController {
     }
 
     // @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping(path = "/{id}", headers = API_VERSION_1)
     public ApiResponse deleteUser(@PathVariable(value = "id") @Min(1) Long _id) throws ResourceNotFoundException {
         log.info("Request api DELETE api/v1/users/{}", _id);
 
@@ -102,7 +104,7 @@ public class UserController {
         return new ApiResponse(HttpStatus.OK.value(), Translator.toLocale("user-delete-success"));
     }
 
-    @PatchMapping("/change-password/{id}")
+    @PatchMapping(path = "/change-password/{id}", headers = API_VERSION_1)
     public ApiResponse changPassword(@PathVariable("id") @Min(1) Long _id, @RequestParam("password") String password) throws ResourceNotFoundException {
         log.info("Request api PATCH api/v1/users/changePassword/{}", _id);
 

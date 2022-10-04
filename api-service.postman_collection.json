@@ -194,7 +194,13 @@
 					]
 				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Api-Version",
+						"value": "1.0",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "{{LOCAL}}/api/v1/users",
 					"host": [
@@ -243,7 +249,13 @@
 					]
 				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Api-Version",
+						"value": "1.0",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
@@ -297,11 +309,16 @@
 						"value": "vi",
 						"type": "text",
 						"disabled": true
+					},
+					{
+						"key": "Api-Version",
+						"value": "1.0",
+						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"taylq2@beetsoft.com.vn\",\r\n    \"username\": \"taylq_2\",\r\n    \"password\": \"password\"\r\n}",
+					"raw": "{\r\n    \"email\": \"taylq22@beetsoft.com.vn\",\r\n    \"username\": \"taylq\",\r\n    \"password\": \"password\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -336,7 +353,13 @@
 					]
 				},
 				"method": "PUT",
-				"header": [],
+				"header": [
+					{
+						"key": "Api-Version",
+						"value": "1.0",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n    \"id\": {{userId}},\r\n    \"email\": \"taylq22@beetsoft.com.vn\",\r\n    \"username\": \"taylq2\",\r\n    \"password\": \"password\"\r\n}",
@@ -374,7 +397,13 @@
 					]
 				},
 				"method": "PATCH",
-				"header": [],
+				"header": [
+					{
+						"key": "Api-Version",
+						"value": "1.0",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "urlencoded",
 					"urlencoded": [
@@ -415,7 +444,13 @@
 					]
 				},
 				"method": "DELETE",
-				"header": [],
+				"header": [
+					{
+						"key": "Api-Version",
+						"value": "1.0",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "{{LOCAL}}/api/v1/users/{{userId}}",
 					"host": [

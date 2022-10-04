@@ -4,11 +4,13 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.sample.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -25,6 +27,7 @@ import static com.example.sample.util.ApiConst.*;
 import static java.util.Arrays.stream;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j(topic = "API-AUTHORIZATION-FILTER")
@@ -54,9 +57,11 @@ public class ApiAuthorizationFilter extends OncePerRequestFilter {
                     log.error("Error logging in: {}", e.getMessage());
                     response.setHeader("Error", e.getMessage());
                     response.setStatus(FORBIDDEN.value());
-                    Map<String, String> errors = new HashMap<>();
-                    errors.put("error_message", e.getMessage());
                     response.setContentType(APPLICATION_JSON_VALUE);
+
+                    Map<String, Object> errors = new HashMap<>();
+                    errors.put("status", FORBIDDEN.value());
+                    errors.put("message", e.getMessage());
                     new ObjectMapper().writeValue(response.getOutputStream(), errors);
                 }
             } else {

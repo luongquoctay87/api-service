@@ -29,7 +29,7 @@ public class MailService {
      * @param body
      * @throws MessagingException
      */
-    public void sendEmail(String from, String to, String subject, String body) throws MessagingException {
+    public void sendEmail(String from, String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
         message.setTo(to);

@@ -122,7 +122,7 @@
 					"urlencoded": []
 				},
 				"url": {
-					"raw": "{{LOCAL}}/api/v1/auth/forgot-password?email=taylq@beetsoft.com.vn",
+					"raw": "{{LOCAL}}/api/v1/auth/forgot-password?email=taylq@company.com",
 					"host": [
 						"{{LOCAL}}"
 					],
@@ -135,7 +135,7 @@
 					"query": [
 						{
 							"key": "email",
-							"value": "taylq@beetsoft.com.vn"
+							"value": "taylq@company.com"
 						}
 					]
 				}
@@ -318,7 +318,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"taylq22@beetsoft.com.vn\",\r\n    \"username\": \"taylq\",\r\n    \"password\": \"password\"\r\n}",
+					"raw": "{\r\n    \"email\": \"taylq22@company.com\",\r\n    \"username\": \"taylq\",\r\n    \"password\": \"password\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -362,7 +362,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": {{userId}},\r\n    \"email\": \"taylq22@beetsoft.com.vn\",\r\n    \"username\": \"taylq2\",\r\n    \"password\": \"password\"\r\n}",
+					"raw": "{\r\n    \"id\": {{userId}},\r\n    \"email\": \"taylq22@company.com\",\r\n    \"username\": \"taylq2\",\r\n    \"password\": \"password\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

@@ -1,77 +1,115 @@
-# SAMPLE JAVA APPLICATION
-### 1. Tech stack
+# SAMPLE APPLICATION
+![Software Architecture](Software Architecture.png)
+
+## I. Local Environment
+### 1. Pre-Requisites
+- Install JDK 8 or higher
+- Install Maven 3.8.5 or higher
+- Install Docker
+- IntelliJ
+
+### 2. Tech stack
 - Java 8
-- Spring boot 2.6.11
-- Spring boot security 2.6.11
+- Spring boot 2.6.4
+- Spring boot security
 - Spring boot jwt
 - Spring boot jpa
 - Spring boot actuator
-- Postgresql
+- Postgres
 - Swagger 3.0
-- Docker
+- Docker & Docker compose
 - Grafana & Prometheus
 
-### 2. Getting started
+### 3. Getting started
+3.1 build project
+```
+$ mvn clean install
+```
+3.2 build docker images
+```
+$ docker-compose up -d --build
+```
+3.3 View API documents
 
-2.1 build docker images
+Visit Swagger: [Swagger UI](http://localhost:8181/api/v1/swagger-ui.html)
+
+3.4 Check Application Health
+
+Visit [API-Service Health](http://localhost:8181/api/v1/actuator)
+
+3.5 To update code and rerun
 ```
 $ mvn clean install
 $ docker-compose up -d --build
 ```
 
-2.2 Test
-```
-$ curl --location --request POST http://localhost:8181/api/v1/auth/login --header Authorization:Basic b2F1dGgyQ2xpZW50Om9hdXRoMlNlY3JldA== --header Content-Type:application/x-www-form-urlencoded --data-urlencode username=sysadmin --data-urlencode password=password
-```
-
-2.3 View API information by Swagger
-
-Visit Swagger:  [Swagger UI](http://localhost:8181/api/v1/swagger-ui.html)
-
-
-2.4 Check Application Health
-```
-$ curl --location --request GET http://localhost:8099/actuator
-```
-
-2.5 Update Code and ReRun
-```
-$ mvn clean install
-$ docker-compose up -d --build api-service
-```
- 
-2.6 View api-service container log
+3.6 View application log
 ```
 $ docker-compose logs -tf api-service
 ```
 
-2.7 Remote Debug
-Connect port 5005
+3.7 Remote Debug
+- Connect port 5005
+- Run Debug Mote
 
-2.8 Log and Monitoring API-Service
-    
+3.8 Log and Monitoring Application
 - Monitoring and alert: [Prometheus Target](http://localhost:9090/targets)
 - Prometheus web UI: [Prometheus Graph](http://localhost:9090/graph)
-- Grafana web UI: [Grafana](http://localhost:3000)
-  - default account: admin/admin
-    
-
-
-### 3 Push Images to Docker Hub (Reverse to deploy on EC2)
-**3.1 On Local**
-- Create docker tag
+- Sign in grafana with account set in .env file: web UI: [Grafana](http://localhost:3000)
 ```
-$ docker tag sample-java-app_api-service luongquoctay87/sample-java-app:v1.0.0
+    GRAFANA_USER=admin
+    GRAFANA_PASSWORD=password
 ```
 
-- Push to Docker Hub
+***
+# II. DEVELOP | Jenkins CI/CD
+### Case 1: Build and run docker compose at local:
 ```
-$ docker login
-$ docker push luongquoctay87/sample-java-app:v1.0.0
+  $ mvn clean install
+  $ docker-compose up -d --build
+```
+### Case 2: Build and push the image to a container registry and run images
+- To provide DockerHub credentials to .m2/settings.xml with content as below:
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+	<pluginGroups></pluginGroups>
+	<proxies></proxies>
+	<servers>
+    <server>
+      <id>registry.hub.docker.com</id>
+      <username>luongquoctay87</username>
+      <password>Hoilamj!123</password>
+    </server>
+	</servers>
+	<mirrors>
+	</mirrors>
+	<profiles></profiles>
+</settings>
+```
+- Build and push the images
+```
+  $ mvn compile jib:build
+  $ docker-compose -f docker-compose.release.yml up -d
 ```
 
-**3.2 On EC2**
+***
+# III. UAT | DEPLOY
+## 1. AWS Pre-Requisites
+- EC2
+- S3
+- RDS (optional)
 
+## 2. Installation EC2
+### 2.1. Pre-Requisites
+- Install JDK 8 or higher
+- Install Maven 3.8.5 or higher
+- Install Docker
+- Set up environment
+
+## 2.2. Installation
 - Install docker
 ```
 $ sudo su -
@@ -89,165 +127,30 @@ $ ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 $ docker-compose -v
 ```
 
-- Create persisting environment variables
-
-$ vi ~/.bash_profile
+- Set up system environment: copy all content `.env` file and paste to `.bash_profile`
   ```
-  export POSTGRES_URL=database-1.ctixzu74yr0p.ap-southeast-1.rds.amazonaws.com
-  export POSTGRES_PORT=5432
-  export POSTGRES_DB=db_test
-  export POSTGRES_USER=admin
-  export POSTGRES_PASSWORD=12345678
+   $ vi ~/.bash_profile
   ```
-$ source ~/.bash_profile
-
-
-- Create file `docker-compose.yml`
-```
-version: '3.8'
-
-  api-service:
-      image: luongquoctay87/sample-java-app:v1.0.0
-      container_name: api-service
-      environment:
-        - MYSQL_URL=${MYSQL_URL}
-        - MYSQL_PORT=${MYSQL_PORT}
-        - MYSQL_DATABASE=${MYSQL_DATABASE}
-        - MYSQL_USER=${MYSQL_USER}
-        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      ports:
-        - "8080:8080"
-      networks:
-        - backend
-
-  prometheus:
-    image: "prom/prometheus"
-    container_name: prometheus
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-    networks:
-      - backend
-
-  grafana:
-    image: "grafana/grafana"
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    networks:
-      - backend
-
-networks:
-  backend:
-    name: api-network
-
-```
-
-- Create file `prometheus.yml`
-```
-scrape_configs:
-  - job_name: 'app-metrics'
-    metrics_path: '/api/v1/actuator/prometheus'
-    scrape_interval: 5s
-    static_configs:
-      - targets:
-          - 54.151.224.116:8080
-```
-
-### 4. Set up Jenkins on EC2
-[Jenkins Set up Guideline](https://www.section.io/engineering-education/building-a-java-application-with-jenkins-in-docker/)
-
-4.1 Create `Dockerfile`
-```
-FROM jenkins/jenkins:lts
-USER root
-RUN apt-get update -qq \
-	&& apt-get install -qqy apt-transport-https ca-certificates curl gnupg2 software-properties-common
-RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
-RUN add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/debian \
-   $(lsb_release -cs) \
-   stable"
-RUN apt-get update  -qq \
-	&& apt-get install docker-ce -y
-RUN usermod -aG docker jenkins
-```
-
-4.2 Build image
-```
-$ service docker start
-$ service docker status
-$ systemctl enable docker
-$ docker image build -t jenkins-docker .
-```
-
-4.3 Run docker image
-```
-docker run -d -it -p 8081:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock --restart unless-stopped jenkins-docker
-```
-
-4.4 Set up jenkins
-
-Access [Jenkins Server](http://localhost:8081) 
-```
-  $ docker exec -it <container_name/container_id> /bin/bash
-  $ cat /var/jenkins_home/secrets/initialAdminPassword
-  -> copy/paste to jenkins
-
-  1. Jenkins global configurations
-      System Configurations
-          Global Tool Configuration
-              - 
-              - JDK
-                  Lấy path jav_home trong container
-                      $ docker exec -it <container_name/container_id> /bin/bash
-                      $echo $JAVA_HOME
-                  + name: JDK
-                  + JAVA_HOME: /opt/java/openjdk
-              - Maven config
-                  + name: maven-3.8.5
-                  + install automatically: install from apache
-              
-  2. Jenkins item
-      + Name: sample-java-app
-      + Freestyle project
+  ```
+  GRAFANA_USER=admin
+  GRAFANA_PASSWORD=password
   
-  3. Git
-      Github project: https://github.com/luongquoctay87/sample-java-app
-      Git: https://github.com/luongquoctay87/sample-java-app.git
-      Credential: luongquoctay87/xxxxxxx
-      
-  4. Build trigger
-      Poll SCM
-        Schedule: * * * * *
-      
-  5. Build Environment
-      Invoke top-level Maven targets
-          Maven version: 3.8.5
-          Goals: test
-      Invoke top-level Maven targets
-          Maven version: 3.8.5
-          Goals: install
-          
-  6. Build now
+  POSTGRES_URL=localhost
+  POSTGRES_PORT=5432
+  POSTGRES_DATABASE=postgres
+  POSTGRES_USER=postgres
+  POSTGRES_PASSWORD=password
   
-  7. Building and deploying our Docker image to Docker Hub
-    7.1 Install plugin
-    In Manage Jenkins, select Manage Plugins under System Configurations, search and install the following plugins:
-      - docker-build-step
-      - CloudBees Docker Build and Publish
-    7.2 Add Build Step
-      -> Docker Build
-        -> Docker Build and Publish
-          + Repository name: luongquoctay87/sample-java-app
-          + Tag: v1.0.0
-     7.3 Login to our Docker Hub account inside our Jenkins container
-      
-      or
-      $ docker exec -it <container_name/container_id> /bin/bash
-      $ docker login
-     7.4 Rebuild
-      Click: Build now
-     
-``` 
+  MAIL_HOST=smtp.gmail.com
+  MAIL_PORT=587
+  MAIL_USERNAME=crmsystem.sender@gmail.com
+  MAIL_PASSWORD=mkwcalqvyssuszab
+  
+  ACCESS_KEY=XXX
+  SECRET_KEY=YYY
+  BUCKET_NAME=ZZZ
+    ...
+  ```
+
+## 3. Run Application
+Run application by docker with content as same as `docker-compose.release.yml` file

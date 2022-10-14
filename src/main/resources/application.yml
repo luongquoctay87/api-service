@@ -1,6 +1,6 @@
 spring:
   application:
-    name: sample-java-app
+    name: api-service
 
 server:
   port: 8181
@@ -11,11 +11,11 @@ api:
     title: API Services
     description: API to fetch review details for application
     version: 1.0.0
-    terms-of-service: https://beetsoft.com.vn/terms/
+    terms-of-service: https://company.com/terms/
     contact:
-      name: BEETSOFT CO., LTD
-      email: contact@beetsoft.com.vn
-      url: https://beetsoft.com.vn/
+      name: SOFTWARE CO., LTD
+      email: contact@company.com
+      url: https://company.com/
     license:
       name: Apache 2.0
       url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -32,9 +32,9 @@ cloud:
     stack:
       auto: false
     credentials:
-      accessKey: ${ACCESS_KEY}
-      secretKey: ${SECRET_KEY}
-      bucketName: ${BUCKET_NAME}
+      accessKey: ${ACCESS_KEY:xxx}
+      secretKey: ${SECRET_KEY:yyy}
+      bucketName: ${BUCKET_NAME:zzz}
 
 logging:
   level:

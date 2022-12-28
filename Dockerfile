@@ -1,9 +1,9 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:11
 
 ARG JAR_FILE=target/api-service.jar
 
-RUN mkdir /opt/api-service
+ADD ${JAR_FILE} api-service.jar
 
-COPY ${JAR_FILE} /opt/api-service/api-service.jar
+EXPOSE 8181
 
-ENTRYPOINT ["java","-jar","/opt/api-service/api-service.jar"]
+ENTRYPOINT ["java","-jar","api-service.jar"]

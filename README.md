@@ -3,13 +3,13 @@
 
 ## I. Local Environment
 ### 1. Pre-Requisites
-- Install JDK 8 or higher
-- Install Maven 3.8.5 or higher
+- Install JDK 11 or higher
+- Install Maven 3.8.6 or higher
 - Install Docker
 - IntelliJ
 
 ### 2. Tech stack
-- Java 8
+- Java 11
 - Spring boot 2.6.4
 - Spring boot security
 - Spring boot jwt
@@ -56,10 +56,6 @@ $ docker-compose logs -tf api-service
 - Monitoring and alert: [Prometheus Target](http://localhost:9090/targets)
 - Prometheus web UI: [Prometheus Graph](http://localhost:9090/graph)
 - Sign in grafana with account set in .env file: web UI: [Grafana](http://localhost:3000)
-```
-    GRAFANA_USER=admin
-    GRAFANA_PASSWORD=password
-```
 
 ***
 # II. DEVELOP | Jenkins CI/CD
@@ -92,7 +88,7 @@ $ docker-compose logs -tf api-service
 - Build and push the images
 ```
   $ mvn compile jib:build
-  $ docker-compose -f docker-compose.release.yml up -d
+  $ docker-compose up -d
 ```
 
 ***

@@ -10,10 +10,10 @@ import java.util.Date;
 
 @Entity
 @Table(name = "tbl_users")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Data
 public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

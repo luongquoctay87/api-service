@@ -3,7 +3,6 @@ package com.service.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.service.api.response.TokenResponse;
-import com.service.exception.ResourceNotFoundException;
 import com.service.model.AppUser;
 import com.service.model.Token;
 import com.service.repository.TokenRepo;
@@ -11,6 +10,7 @@ import com.service.repository.UserRepo;
 import com.service.util.ApiConst;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -20,29 +20,38 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j(topic = "TOKEN-SERVICE")
 @RequiredArgsConstructor
-@Slf4j
 public class TokenService {
+    @Value("${jwt.secret}")
+    private String secretKey;
+    @Value("${jwt.token.validity}")
+    private long jwtTokenValidity;
+    @Value("${jwt.refresh.token.validity}")
+    private long jwtRefreshTokenValidity;
+    @Value("${jwt.reset.token.validity}")
+    private long jwtResetTokenValidity;
 
     private final TokenRepo tokenRepo;
     private final UserRepo userRepo;
 
     /**
      * Generate token information
+     *
      * @param user
      * @param url
      * @return
      */
     public TokenResponse generateToken(User user, String url) {
-        Algorithm algorithm = Algorithm.HMAC256(ApiConst.JWT_SECRET.getBytes());
+        Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
         List<String> authorities = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + ApiConst.JWT_TOKEN_VALIDITY))
+                .withExpiresAt(new Date(System.currentTimeMillis() + (jwtTokenValidity * 60 * 1000)))
                 .withIssuer(url)
-                .withClaim(ApiConst.JWT_ROLE, authorities)
+                .withClaim(ApiConst.USER_ROLE, authorities)
                 .sign(algorithm);
-        Date expiryDate = new Date(System.currentTimeMillis() + ApiConst.JWT_REFRESH_TOKEN_VALIDITY);
+        Date expiryDate = new Date(System.currentTimeMillis() + (jwtRefreshTokenValidity * 24 * 60 * 60 * 1000));
 
         String refreshToken = JWT.create()
                 .withSubject(user.getUsername())
@@ -62,8 +71,9 @@ public class TokenService {
 
     /**
      * Find token by token string
-     * @param token
-     * @return
+     *
+     * @param token string token
+     * @return token
      */
     public Token findByToken(String token) {
         return tokenRepo.findByToken(token);
@@ -72,9 +82,9 @@ public class TokenService {
     /**
      * Save refresh token after login successful
      *
-     * @param username
-     * @param refreshToken
-     * @param expiryDate
+     * @param username username
+     * @param refreshToken refresh token
+     * @param expiryDate expiry date
      */
     public void saveRefreshToken(String username, String refreshToken, Date expiryDate) {
         log.info("Saving refresh token to the database");
@@ -101,11 +111,10 @@ public class TokenService {
      *
      * @param appUser
      * @param resetToken Token will be expired after 1 hour
-     * @throws ResourceNotFoundException
      */
-    public void saveResetToken(AppUser appUser, String resetToken) throws ResourceNotFoundException {
-        // Will be expired after 1 hour
-        Date expiryDate = new Date(System.currentTimeMillis() + ApiConst.JWT_RESET_TOKEN_VALIDITY);
+    public void saveResetToken(AppUser appUser, String resetToken) {
+        // Will be expired after few minutes
+        Date expiryDate = new Date(System.currentTimeMillis() + jwtResetTokenValidity * 60 * 1000);
 
         Token token = tokenRepo.findByUserId(appUser.getId());
         if (token == null) {

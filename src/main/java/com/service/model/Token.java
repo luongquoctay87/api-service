@@ -9,10 +9,10 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity(name = "tbl_token")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Data
 public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

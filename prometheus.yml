@@ -2,6 +2,6 @@ scrape_configs:
   - job_name: 'api-service'
     metrics_path: '/api/v1/actuator/prometheus'
     static_configs:
-      - targets: [ 'host.docker.internal:8181' ]
+      - targets: [ 'api-service:8181' ]
         labels:
           application: 'API Service Application'

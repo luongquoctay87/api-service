@@ -45,9 +45,9 @@
 					]
 				},
 				"url": {
-					"raw": "{{LOCAL}}/api/v1/auth/login",
+					"raw": "{{8181}}/api/v1/auth/login",
 					"host": [
-						"{{LOCAL}}"
+						"{{8181}}"
 					],
 					"path": [
 						"api",
@@ -95,9 +95,9 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{LOCAL}}/api/v1/auth/refresh-token",
+					"raw": "{{8181}}/api/v1/auth/refresh-token",
 					"host": [
-						"{{LOCAL}}"
+						"{{8181}}"
 					],
 					"path": [
 						"api",
@@ -122,9 +122,9 @@
 					"urlencoded": []
 				},
 				"url": {
-					"raw": "{{LOCAL}}/api/v1/auth/forgot-password?email=taylq@company.com",
+					"raw": "{{8181}}/api/v1/auth/forgot-password?email=taylq@beetsoft.com.vn",
 					"host": [
-						"{{LOCAL}}"
+						"{{8181}}"
 					],
 					"path": [
 						"api",
@@ -135,7 +135,7 @@
 					"query": [
 						{
 							"key": "email",
-							"value": "taylq@company.com"
+							"value": "taylq@beetsoft.com.vn"
 						}
 					]
 				}
@@ -166,9 +166,9 @@
 					]
 				},
 				"url": {
-					"raw": "{{LOCAL}}/api/v1/auth/reset-password",
+					"raw": "{{8181}}/api/v1/auth/reset-password",
 					"host": [
-						"{{LOCAL}}"
+						"{{8181}}"
 					],
 					"path": [
 						"api",
@@ -182,6 +182,9 @@
 		},
 		{
 			"name": "users",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -201,10 +204,19 @@
 						"type": "text"
 					}
 				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": 200,\r\n    \"message\": \"users\",\r\n    \"data\": {\r\n        \"pageNo\": 1,\r\n        \"pageSize\": 20,\r\n        \"total\": 4,\r\n        \"items\": [\r\n            {\r\n                \"username\": \"sysadmin\",\r\n                \"email\": \"sysadmin@beetsoft.com.vn\"\r\n            },\r\n            {\r\n                \"username\": \"admin\",\r\n                \"email\": \"admin@beetsoft.com.vn\"\r\n            },\r\n            {\r\n                \"username\": \"manager\",\r\n                \"email\": \"manager@beetsoft.com.vn\"\r\n            },\r\n            {\r\n                \"username\": \"user\",\r\n                \"email\": \"user@beetsoft.com.vn\"\r\n            }\r\n        ]\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "{{LOCAL}}/api/v1/users",
+					"raw": "{{8181}}/api/v1/users?pageNo=1&pageSize=20",
 					"host": [
-						"{{LOCAL}}"
+						"{{8181}}"
 					],
 					"path": [
 						"api",
@@ -214,13 +226,11 @@
 					"query": [
 						{
 							"key": "pageNo",
-							"value": "1",
-							"disabled": true
+							"value": "1"
 						},
 						{
 							"key": "pageSize",
-							"value": "20",
-							"disabled": true
+							"value": "20"
 						},
 						{
 							"key": "search",
@@ -318,7 +328,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"taylq22@company.com\",\r\n    \"username\": \"taylq\",\r\n    \"password\": \"password\"\r\n}",
+					"raw": "{\r\n    \"email\": null,\r\n    \"username\": \"someone\",\r\n    \"password\": \"password\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -362,7 +372,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": {{userId}},\r\n    \"email\": \"taylq22@company.com\",\r\n    \"username\": \"taylq2\",\r\n    \"password\": \"password\"\r\n}",
+					"raw": "{\r\n    \"id\": {{userId}},\r\n    \"email\": \"taylq22@beetsoft.com.vn\",\r\n    \"username\": \"taylq2\",\r\n    \"password\": \"password\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
